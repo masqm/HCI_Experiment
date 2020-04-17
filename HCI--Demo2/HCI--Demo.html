@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script lang="javascript" src="js/jquery-3.1.0.min.js"></script>
+    <script lang="javascript" src="js/d3.min.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    var dimension = 500;
+
+    var svg = d3.select('body').append('svg')
+        .attr('width', dimension)
+        .attr('height', dimension)
+        .style('background-color', 'black');
+
+    // YOUR CODE SHOULD START HERE
+    /*
+     * Name: Jinyong Hu (jhu07)
+     * Word: Conceal
+     */
+
+    var mark = 1;
+    var size = 300;
+    var tricky_circle;
+    var hiddenx, hiddeny;
+    var circle_group = [];
+    var randx = dimension / 2;
+    var randy = dimension / 2;
+    var display_opacity = 1;
+    var hidden_opacity = 0.0000001;
+    var position = [-150, -50, 50, 150];
+
+    // return random location of x-axis
+    function getRandx() {
+        var temp;
+        do {
+            temp = Math.floor(Math.random() * 4);
+        } while (randx == position[temp])
+        randx = position[temp];
+        hiddenx = temp + 1;
+        return randx;
+    }
+
+    // return random location of y-axis
+    function getRandy() {
+        var temp;
+        do {
+            temp = Math.floor(Math.random() * 4);
+        } while (randy == position[temp])
+        randy = position[temp];
+        hiddeny = temp + 1;
+        return randy;
+    }
+
+    // generate 16 circles
+    function genCircle() {
+        for (var i = 1; i < 5; i++) {
+
+            for (var j = 1; j < 5; j++) {
+
+                var x = dimension / 5 * i;
+                var y = dimension / 5 * j;
+
+                circle_group[i] = svg.append("circle")
+                    .attr("id", "row" + i + "col" + j)
+                    .attr("cx", x)
+                    .attr("cy", y)
+                    .attr("r", 40)
+                    .attr("z-index", 2)
+                    .style("fill", "#84817a")
+                    .on("mouseover", ck_hidden(i, j));
+            }
+        }
+    }
+
+    // speed up and random conceal the tricky circle
+    function ck_hidden(i, j) {
+        return function () {
+            if (i == hiddenx && j == hiddeny) {
+				if(mark < 11){
+                	mark++;
+                	tricky_circle.transition()
+                    	.delay(6)
+                    	.duration(800)
+                    	.style("opacity", display_opacity)
+                    	.attr("transform", "translate(" + getRandx() + ", " + getRandy() + ")")
+                    	.on("end", function () {
+                    		genCircle();
+                    	});
+				} else if(mark == 11){
+					finish();
+				}
+            }
+    	}
+	}
+
+    // generate cloud like background
+    for (var i = 1; i < 5; i++) {
+
+        for (var j = 1; j < 5; j++) {
+
+            var x = dimension / 5 * i;
+            var y = dimension / 5 * j;
+
+            circle_group[4 * (i - 1) + j] = svg.append("circle")
+                .attr("id", "row" + i + "col" + j)
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", 100)
+                .style("fill", "#dfe6e9");
+        }
+    }
+
+    genCircle();
+
+    // generate trick circle
+    tricky_circle = svg.append("circle")
+        .attr("id", "tricky_circle")
+        .attr("cx", dimension / 2)
+        .attr("cy", dimension / 2)
+        .attr("r", 500)
+        .style("fill", "#f84146");
+
+    // set click event to decrease the size of tricky circle
+    tricky_circle.on("click", function () {
+
+        tricky_circle.transition()
+            .delay(10)
+            .duration(1000)
+            .attr("r", 30)
+            .attr("transform", "translate(" + getRandx() + ", " + getRandy() + ")")
+            .on("end", function () {
+                tricky_circle.transition()
+                    .duration(800)
+                genCircle();
+            });
+    });
+	
+	function finish(){
+    	end_circle = svg.append("circle")
+        	.attr("id", "tricky_circle")
+        	.attr("cx", dimension / 2)
+        	.attr("cy", dimension / 2)
+        	.attr("r", 500)
+        	.style("fill", "#34eb68");
+		// doSomething()
+		alert("Finished!");
+	}
+	
+	const doSomething = async () => {
+	 	await sleep(3000)
+	  	//do stuff
+	}
+
+
+    // YOUR CODE SHOULD END HERE
+</script>
+</body>
+</html>
